@@ -39,7 +39,8 @@ void ExpectImagesEqual(const SimpleImage& img1, const SimpleImage& img2) {
 
   for (int row = 0; row < img1.height(); ++row) {
     for (int col = 0; col < img1.width(); ++col) {
-      EXPECT_EQ(img1(row, col), img2(row, col)) << "Mismatch at row=" << row << ", col=" << col;
+      EXPECT_EQ(img1(row, col), img2(row, col)) << "Mismatch at row=" << row
+                                                << ", col=" << col;
     }
   }
 }
@@ -89,16 +90,15 @@ TEST(ConvSlow, conv_3x3_single_pt) {
   }
 
   const int padding = kernel.width() / 2;
-  
+
   SimpleImage output_image(input_image.width(), input_image.height());
   convolve2D_slow(input_image.data(), input_image.width(), input_image.height(),
-                  kernel.data(), kernel.width(), padding,
-                  output_image.data());
+                  kernel.data(), kernel.width(), padding, output_image.data());
 
   ExpectImagesEqual(input_image, output_image);
 }
 
-class ConvPadding : public ::testing::TestWithParam<int> { };
+class ConvPadding : public ::testing::TestWithParam<int> {};
 
 TEST_P(ConvPadding, conv_3x3_pad) {
   // Create simple kernel k(1, 1) = 1, and 0 elsewhere.
@@ -113,26 +113,23 @@ TEST_P(ConvPadding, conv_3x3_pad) {
   }
 
   const int padding = GetParam();
-  
+
   SimpleImage output_image(input_image.width(), input_image.height());
   convolve2D_slow(input_image.data(), input_image.width(), input_image.height(),
-                  kernel.data(), kernel.width(), padding,
-                  output_image.data());
+                  kernel.data(), kernel.width(), padding, output_image.data());
 
   SimpleImage fast_output(input_image.width(), input_image.height());
   convolve2D(input_image.data(), input_image.width(), input_image.height(),
-             kernel.data(), kernel.width(), padding,
-             fast_output.data());
+             kernel.data(), kernel.width(), padding, fast_output.data());
 
   ExpectImagesEqual(output_image, fast_output);
 }
 
-INSTANTIATE_TEST_CASE_P(Conv3x3Padding,
-                        ConvPadding,
-                        ::testing::Range<int>(0, 3),);
+INSTANTIATE_TEST_SUITE_P(Conv3x3Padding, ConvPadding,
+                         ::testing::Range<int>(0, 3));
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  
+
   return RUN_ALL_TESTS();
 }

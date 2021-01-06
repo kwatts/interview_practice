@@ -8,14 +8,14 @@ void convolve2D(const float* input, int width, int height, const float* kernel,
                 int k_size, int k_padding, float* output) {
   // k_padding must be within range of kernel size.
   assert(k_padding >= 0 && k_padding < k_size);
-  
+
   // Allocate cache rows with proper padding. This avoids out-of-bounds checks
   // in the inner loop.
   const int row_stride = width + (k_size - 1);
 
   // For kx=[0, k_size)
   // int src_x = out_x + kx - k_padding;
-  
+
   // Depending on k_padding, the input data will be loaded as:
   // [ DATA _ _ ] or [ _ _ DATA ] or [ _ DATA _ ]
   // in_x = out_x - x_offset + kx;
@@ -30,8 +30,10 @@ void convolve2D(const float* input, int width, int height, const float* kernel,
   // number of rows.
   for (int out_y = 0; out_y < k_size; ++out_y) {
     const int src_y = out_y - k_padding;
-    if (src_y < 0) { continue; }
-    
+    if (src_y < 0) {
+      continue;
+    }
+
     cache_memcpy(input_cache + out_y * row_stride + x_offset,
                  input + src_y * width, width * sizeof(float));
   }
