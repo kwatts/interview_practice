@@ -19,8 +19,8 @@ TEST(SimpleGraph, easy_connections) {
     return graph.getConnections(start);
   };
 
-  CHECK(2.0 == findCost(get_connections, "A", "B"), "");
-  CHECK(8.0 == findCost(get_connections, "A", "C"), "");
-  CHECK(-1 == findCost(get_connections, "A", "K"), "");
-  CHECK(0.125 == findCost(get_connections, "C", "A"), "");
+  EXPECT_EQ(2.0, findCost(get_connections, "A", "B"));
+  EXPECT_EQ(8.0, findCost(get_connections, "A", "C"));
+  EXPECT_EQ(-1, findCost(get_connections, "A", "K"));
+  EXPECT_EQ(0.125, findCost(get_connections, "C", "A"));
 }

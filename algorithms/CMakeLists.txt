@@ -12,7 +12,10 @@ set(CMAKE_CXX_FLAGS "-std=c++1y ${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror -Wde
 
 add_executable(replace_spaces src/replace_spaces.cc)
 
-add_executable(algorithm src/algorithm_test.cc)
+add_executable(algorithm_test src/algorithm_test.cc)
+target_link_libraries(algorithm_test pthread gtest gtest_main)
+gtest_add_tests(TARGET      algorithm_test
+  SOURCES src/algorithm_test.cc)
 
 # Graph basics
 add_library(simple_graph src/simple_graph.cc)

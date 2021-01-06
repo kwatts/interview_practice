@@ -2,11 +2,11 @@
 
 #include <cstdlib>
 
-#include "testing_util.h"
+#include <gtest/gtest.h>
 
 using namespace algorithm;
 
-void testReverseInts() {
+TEST(testReverseInts, simple) {
   constexpr int kArray[] = {0, 1, 2, 3, 4, 5};
   constexpr int kNumValues = sizeof(kArray) / sizeof(kArray[0]);
   int array_cp[kNumValues];
@@ -16,12 +16,6 @@ void testReverseInts() {
 
   for (int i = 0; i < kNumValues; ++i) {
     int j = kNumValues - i - 1;
-    CHECK(array_cp[i] == kArray[j], "Value mismatch!");
+    EXPECT_EQ(array_cp[i], kArray[j]) << "Value mismatch at " << i;
   }
-}
-
-int main(int argc, char **argv) {
-  testReverseInts();
-
-  return 0;
 }
