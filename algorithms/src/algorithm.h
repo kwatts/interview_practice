@@ -26,4 +26,4 @@ void copy(InputIteratorT begin, const InputIteratorT end, OutputIteratorT out) {
   }
 }
 
-} // namespace algorithm
+}  // namespace algorithm

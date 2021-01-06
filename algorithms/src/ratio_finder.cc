@@ -1,9 +1,15 @@
 #include "ratio_finder.h"
 
+#include <set>
+#include <map>
+#include <vector>
+#include <string>
+
+#include "query_helper.h"
+
 void FindRootsAndBaseRatios(
     std::vector<std::string> const &nodes, QueryHelper const &get_connections,
-    std::map<std::string, std::pair<std::string, double>> &
-        node_roots_and_ratios) {
+    std::map<std::string, ConnectionAndCost> &node_roots_and_ratios) {
   std::set<std::string> unused_nodes(nodes.begin(), nodes.end());
 
   while (!unused_nodes.empty()) {

@@ -2,12 +2,12 @@
 
 namespace type_traits {
 
-template<typename ValueT>
+template <typename ValueT>
 struct RemoveReference {
   typedef ValueT Type;
 };
 
-template<typename ValueT>
+template <typename ValueT>
 struct RemoveReference<ValueT &> {
   typedef ValueT Type;
 };
