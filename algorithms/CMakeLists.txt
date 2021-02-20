@@ -6,9 +6,11 @@ project(interview_practice)
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_C_FLAGS "-std=c99 -Wall -Wpedantic -Werror" ${CMAKE_C_FLAGS})
-set(CMAKE_CXX_FLAGS "-std=c++1y ${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror -Wdelete-non-virtual-dtor -Wold-style-cast -Woverloaded-virtual")
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Werror -Wdelete-non-virtual-dtor -Wold-style-cast -Woverloaded-virtual")
 
 add_executable(replace_spaces src/replace_spaces.cc)
 
