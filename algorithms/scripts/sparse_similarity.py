@@ -12,17 +12,6 @@ from typing import Sequence
 import unittest
 
 
-def _union_size(doc1: Sequence[int], doc2: Sequence[int]) -> int:
-    """Computes union size of doc1, doc2."""
-
-    # TODO - This could be optimized if all input docs were sorted
-    # Best case is O(n + m) time.
-    s = set(doc1)
-    s.update(doc2)
-
-    return len(s)
-
-
 def compute_doc_similarity(documents: {int: Sequence[int]}) -> {(int, int), float}:
     # Find all documents with characters in common: O(D) using HashMap
     char_to_doc_id = {}
@@ -43,9 +32,9 @@ def compute_doc_similarity(documents: {int: Sequence[int]}) -> {(int, int), floa
     # Iterate and compute result: O(m *
     result = {}
     for doc_pair, count in doc_pair_to_count.items():
-        result[doc_pair] = count / _union_size(
-            documents[doc_pair[0]],
-            documents[doc_pair[1]])
+        # union(A, B) = A + B - intersection(A, B)
+        result[doc_pair] = count / \
+            (len(documents[doc_pair[0]]) + len(documents[doc_pair[1]]) - count)
 
     return result
 
