@@ -94,7 +94,7 @@ void makeHeap(IteratorT start, IteratorT end, LessT const &cmp) {
 template <typename IteratorT,
           typename LessT = sorting_practice::Less<
               typename IteratorTraits<IteratorT>::ValueType>>
-void heapSort(IteratorT start, IteratorT end, LessT const &cmp = LessT()) {
+void heapSort(IteratorT start, IteratorT end, LessT const &cmp) {
   typename IteratorTraits<IteratorT>::DifferenceType total_len = end - start;
   typename IteratorTraits<IteratorT>::DifferenceType heap_size = total_len;
 
