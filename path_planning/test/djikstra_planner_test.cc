@@ -119,3 +119,32 @@ TEST(computePath, obstacleGraph) {
   EXPECT_EQ(start, path[0]);
   EXPECT_EQ(end, path[8]);
 }
+
+// No valid path (can't go around obstacles).
+TEST(computePath, blockedGraph) {
+  Map2D<float> cost_map(/*width=*/5, /*height=*/5,
+                        // Values packed row major.
+                        {0.0, 0.0, 0.0, 0.0, 0.0,  //
+                         0.0, 0.0, 0.0, 0.0, 0.0,  //
+                         INF, INF, INF, INF, INF,  // obstacle!
+                         0.0, 0.0, 0.0, 0.0, 0.0,  //
+                         0.0, 0.0, 0.0, 0.0, 0.0});
+
+  const Cell start(0, 2);  // top row, middle
+  const Cell end(4, 2);    // bottom row, middle
+
+  std::vector<Cell> path;
+  double path_cost = computePath(start, end, cost_map, path);
+
+  EXPECT_EQ(INF, path_cost);
+  ASSERT_EQ(0, path.size());
+
+  // Find valid path to a different point.
+  const Cell end2(1, 4);
+
+  path_cost = computePath(start, end2, cost_map, path);
+  EXPECT_EQ(3, path_cost);
+  ASSERT_EQ(4, path.size());
+  EXPECT_EQ(start, path[0]);
+  EXPECT_EQ(end2, path[3]);
+}
