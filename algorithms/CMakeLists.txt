@@ -6,7 +6,7 @@ project(interview_practice)
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -44,3 +44,9 @@ target_link_libraries(ratio_finder_test libratio_finder pthread gtest gtest_main
 gtest_add_tests(TARGET ratio_finder_test
   SOURCES src/ratio_finder_test.cc)
 
+add_library(
+  prefix_dict src/prefix_dict.cc)
+add_executable(prefix_dict_test src/prefix_dict_test.cc)
+target_link_libraries(prefix_dict_test prefix_dict pthread gtest gtest_main)
+gtest_add_tests(TARGET      prefix_dict_test
+  SOURCES src/prefix_dict_test.cc)
