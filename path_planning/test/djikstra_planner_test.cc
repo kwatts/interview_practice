@@ -7,13 +7,15 @@
 static const float INF = std::numeric_limits<float>::infinity();
 
 TEST(findPathFromExploration, oneCellGraph) {
+  const Cell start(0, 0);
+
   Map2D<impl::CellCostAndParent> explored_map(/*width=*/1, /*height=*/1);
-  explored_map.getCost(0, 0).cost = 0.0;
+  explored_map.getCost(start).cost = 0.0;
 
   std::vector<Cell> path;
   double path_cost = impl::findPathFromExploration(
-      /*start=*/Cell(0, 0),
-      /*end=*/Cell(0, 0), explored_map, path);
+      /*start=*/start,
+      /*end=*/start, explored_map, path);
 
   EXPECT_EQ(0.0, path_cost);
   ASSERT_EQ(1, path.size());
@@ -23,13 +25,13 @@ TEST(findPathFromExploration, oneCellGraph) {
 
 // Path is from [ (0,0), (0,1) ]
 TEST(findPathFromExploration, twoCellGraph) {
-  Map2D<impl::CellCostAndParent> explored_map(/*width=*/2, /*height=*/1);
-  explored_map.getCost(0, 0).cost = 0.0;
-  explored_map.getCost(0, 1).cost = 1.0;
-  explored_map.getCost(0, 1).parent = Cell(0, 0);
-
   const Cell start(0, 0);
   const Cell end(0, 1);
+
+  Map2D<impl::CellCostAndParent> explored_map(/*width=*/2, /*height=*/1);
+  explored_map.getCost(start).cost = 0.0;
+  explored_map.getCost(end).cost = 1.0;
+  explored_map.getCost(end).parent = start;
 
   std::vector<Cell> path;
   double path_cost =
@@ -42,10 +44,10 @@ TEST(findPathFromExploration, twoCellGraph) {
 }
 
 TEST(computePath, oneCellGraph) {
-  Map2D<float> cost_map(/*width=*/1, /*height=*/1);
-  cost_map.getCost(0, 0) = 0.0;
-
   const Cell start(0, 0);
+
+  Map2D<float> cost_map(/*width=*/1, /*height=*/1);
+  cost_map.getCost(start) = 0.0;
 
   std::vector<Cell> path;
   double path_cost = computePath(start, start, cost_map, path);

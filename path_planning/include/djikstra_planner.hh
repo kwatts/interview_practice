@@ -6,22 +6,6 @@
 
 #include "map_2d.hh"
 
-struct Cell {
-  int row;
-  int col;
-
-  Cell(int r, int c) : row(r), col(c) {}
-
-  Cell(Cell const &other) = default;
-  Cell &operator=(Cell const &other) = default;
-
-  bool operator==(Cell const &other) const {
-    return row == other.row && col == other.col;
-  }
-
-  bool operator!=(Cell const &other) const { return !(*this == other); }
-};
-
 /**
  * Computes min-cost path between start and end. Returns [] if path not found.
  *

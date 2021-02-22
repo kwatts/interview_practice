@@ -50,46 +50,42 @@ double computePath(Cell start, Cell end, Map2D<float> const &costMap,
       Map2D<impl::CellCostAndParent>(costMap.getWidth(), costMap.getHeight());
 
   // Priority queue ordered by minimum cost ("first").
-  // Note that the same value can be added to the queue with multiple costs.
-  // Cells with
-  std::priority_queue<PathCostToCell, std::deque<PathCostToCell>
+  // Note that the same value can be added to the queue with different costs.
+  std::priority_queue<PathCostToCell, std::deque<PathCostToCell>,
+                      std::greater<PathCostToCell> > queue;
 
-                      , std::greater<PathCostToCell> > queue;
-
-  double start_cost = costMap.getCost(start.row, start.col);
+  double start_cost = costMap.getCost(start);
   queue.push(PathCostToCell(start_cost, start));
-  explored_map.getCost(start.row, start.col).cost = start_cost;
+  explored_map.getCost(start).cost = start_cost;
 
   while (!queue.empty()) {
     const PathCostToCell current = queue.top();
     queue.pop();
 
     // Check if we've already processed this cell with a lower cost.
-    if (current.cost >
-        explored_map.getCost(current.cell.row, current.cell.col).cost) {
+    if (current.cost > explored_map.getCost(current.cell).cost) {
       continue;
     }
 
     const auto &neighbors = getNeighbors(costMap, current.cell);
     for (const Cell n : neighbors) {
-      if (std::isinf(costMap.getCost(n.row, n.col))) {
+      if (std::isinf(costMap.getCost(n))) {
         continue;
       }
 
-      // Cost to move one cell.
+      // Cost to move one cell (diagonal moves not supported).
       static const double TRAVEL_COST = 1.0;
-      double neighbor_cost =
-          current.cost + costMap.getCost(n.row, n.col) + TRAVEL_COST;
+      double neighbor_cost = current.cost + costMap.getCost(n) + TRAVEL_COST;
 
       // See if we're already reached this cell from another direction.
       // Ex: parent, or lower-cost path.
-      if (neighbor_cost > explored_map.getCost(n.row, n.col).cost) {
+      if (neighbor_cost > explored_map.getCost(n).cost) {
         continue;
       }
 
       queue.push(PathCostToCell(neighbor_cost, n));
-      explored_map.getCost(n.row, n.col).cost = neighbor_cost;
-      explored_map.getCost(n.row, n.col).parent = current.cell;
+      explored_map.getCost(n).cost = neighbor_cost;
+      explored_map.getCost(n).parent = current.cell;
     }
   }
 
@@ -105,22 +101,21 @@ double findPathFromExploration(Cell start, Cell end,
   Cell current = end;
 
   while (current != start) {
-    double curr_cost = explored_map.getCost(current.row, current.col).cost;
-    if (std::isinf(curr_cost) ||
-        !explored_map.getCost(current.row, current.col).parent) {
+    double curr_cost = explored_map.getCost(current).cost;
+    if (std::isinf(curr_cost) || !explored_map.getCost(current).parent) {
       path.clear();
       return std::numeric_limits<double>::infinity();
     }
 
     path.push_back(current);
-    current = *(explored_map.getCost(current.row, current.col).parent);
+    current = *(explored_map.getCost(current).parent);
   }
 
   path.push_back(start);
 
   std::reverse(path.begin(), path.end());
 
-  return explored_map.getCost(end.row, end.col).cost;
+  return explored_map.getCost(end).cost;
 }
 
 }  // namespace impl
