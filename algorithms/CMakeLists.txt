@@ -63,3 +63,8 @@ add_executable(list_splitter_test src/list_splitter_test.cc)
 target_link_libraries(list_splitter_test pthread gtest gtest_main)
 gtest_add_tests(TARGET      list_splitter_test
   SOURCES src/list_splitter_test.cc)
+
+add_executable(max_visible_points_test src/max_visible_points_test.cc)
+target_link_libraries(max_visible_points_test pthread gtest gtest_main)
+gtest_add_tests(TARGET      max_visible_points_test
+  SOURCES src/max_visible_points_test.cc)
