@@ -72,8 +72,15 @@ void print_singly_linked_list(SinglyLinkedListNode* node, string sep,
  *
  */
 
-// Split into odd/even pairs
+/**
+ * Splits list into odd/even pairs
+ *
+ * @param p_head Head of initial list
+ * @param pp_tail Tail of odd list, used for list concatenation
+ * @param pp_head_even Head of even list
+ */
 void splitLinkedList(SinglyLinkedListNode* p_head,
+                     SinglyLinkedListNode** pp_tail,
                      SinglyLinkedListNode** pp_head_even) {
   if (!p_head) {
     *pp_head_even = 0x0;
@@ -112,30 +119,21 @@ void splitLinkedList(SinglyLinkedListNode* p_head,
     p_even->next = 0x0;
   }
   p_odd->next = 0x0;
-}
 
-void concatLists(SinglyLinkedListNode* head1, SinglyLinkedListNode* head2) {
-  // Find last valid node in the list
-  SinglyLinkedListNode* prev_head1 = head1;
-  while (head1->next) {
-    head1 = head1->next;
-    prev_head1 = head1;
-  }
-
-  // Assign tail->next to next list.
-  prev_head1->next = head2;
+  *pp_tail = p_odd;
 }
 
 SinglyLinkedListNode* createLinkedList(SinglyLinkedListNode* head) {
+  SinglyLinkedListNode* odds_tail = 0x0;
   SinglyLinkedListNode* evens = 0x0;
 
-  splitLinkedList(head, &evens);
+  splitLinkedList(head, &odds_tail, &evens);
   while (evens) {
-    concatLists(head, evens);
+    odds_tail->next = evens;  // concat lists
 
-    SinglyLinkedListNode* tail2 = 0x0;
-    splitLinkedList(evens, &tail2);
-    evens = tail2;
+    SinglyLinkedListNode* evens_tail = 0x0;
+    splitLinkedList(evens, &odds_tail, &evens_tail);
+    evens = evens_tail;
   }
 
   return head;
@@ -166,9 +164,11 @@ void verifyListContents(SinglyLinkedListNode* p_head,
 }
 
 TEST(splitLinkedList, splitEmpty) {
+  SinglyLinkedListNode* odds_tail = 0x0;
   SinglyLinkedListNode* empty = 0x0;
-  splitLinkedList(0x0, &empty);
+  splitLinkedList(0x0, &odds_tail, &empty);
 
+  ASSERT_EQ(odds_tail, nullptr);
   ASSERT_EQ(empty, nullptr);
 }
 
@@ -176,10 +176,12 @@ TEST(splitLinkedList, splitOne) {
   SinglyLinkedList list;
   list.insert_node(1);
 
+  SinglyLinkedListNode* list_tail = 0x0;
   SinglyLinkedListNode* empty = 0x0;
-  splitLinkedList(list.head, &empty);
+  splitLinkedList(list.head, &list_tail, &empty);
 
   verifyListContents(list.head, {1});
+  ASSERT_EQ(list_tail, list.head);
   ASSERT_EQ(empty, nullptr);
 }
 
@@ -188,11 +190,13 @@ TEST(splitLinkedList, splitTwo) {
   list.insert_node(1);
   list.insert_node(2);
 
+  SinglyLinkedListNode* list_tail = 0x0;
   SinglyLinkedListNode* evens = 0x0;
-  splitLinkedList(list.head, &evens);
+  splitLinkedList(list.head, &list_tail, &evens);
 
   verifyListContents(list.head, {1});
   verifyListContents(evens, {2});
+  ASSERT_EQ(list_tail, list.head);
 }
 
 TEST(splitLinkedList, splitThree) {
@@ -201,11 +205,13 @@ TEST(splitLinkedList, splitThree) {
   list.insert_node(2);
   list.insert_node(3);
 
+  SinglyLinkedListNode* list_tail = 0x0;
   SinglyLinkedListNode* evens = 0x0;
-  splitLinkedList(list.head, &evens);
+  splitLinkedList(list.head, &list_tail, &evens);
 
   verifyListContents(list.head, {1, 3});
   verifyListContents(evens, {2});
+  ASSERT_EQ(list_tail->data, 3);
 }
 
 TEST(splitLinkedList, splitMany) {
@@ -214,36 +220,13 @@ TEST(splitLinkedList, splitMany) {
     list.insert_node(i);
   }
 
+  SinglyLinkedListNode* list_tail = 0x0;
   SinglyLinkedListNode* evens = 0x0;
-  splitLinkedList(list.head, &evens);
+  splitLinkedList(list.head, &list_tail, &evens);
 
   verifyListContents(list.head, {1, 3, 5, 7, 9});
   verifyListContents(evens, {2, 4, 6, 8});
-}
-
-TEST(concatLists, emptyAdd) {
-  SinglyLinkedList list;
-  list.insert_node(1);
-  list.insert_node(2);
-  list.insert_node(3);
-
-  concatLists(list.head, 0x0);
-
-  verifyListContents(list.head, {1, 2, 3});
-}
-
-TEST(concatLists, singleAdd) {
-  SinglyLinkedList list;
-  list.insert_node(1);
-  list.insert_node(2);
-  list.insert_node(3);
-
-  SinglyLinkedList list2;
-  list2.insert_node(5);
-
-  concatLists(list.head, list2.head);
-
-  verifyListContents(list.head, {1, 2, 3, 5});
+  ASSERT_EQ(list_tail->data, 9);
 }
 
 TEST(createLinkedList, twoItems) {
